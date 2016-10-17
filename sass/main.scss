@@ -64,8 +64,15 @@ img {
 	max-width: 100%;
 }
 
-button {
-	outline: none;
+
+
+// --------------------------------------------------
+// Site Title
+// --------------------------------------------------
+.site-title {
+	font-size: 3.2em;
+	padding: 0;
+	margin: 30px 0 0 0;
 }
 
 
@@ -108,12 +115,6 @@ button {
 	}
 }
 
-.site-title {
-	font-size: 3.2em;
-	padding: 0;
-	margin: 30px 0 0 0;
-}
-
 
 
 // --------------------------------------------------
@@ -135,17 +136,18 @@ button {
 			@include boxShadow();
 			@include borderRadius();
 
+			// Blurred image over .song parent -- removed for now, leaving for future
 			.cover-blur {
 				// width: 100%;
 				// height: 100%;
-				// // background-image: url('https://i1.sndcdn.com/artworks-SmAEjP0iKWqC-0-large.jpg');
-				// // background-size: 110% 110%;
-				// // background-position: 5% 5%;
+				// background-image: url('https://i1.sndcdn.com/artworks-SmAEjP0iKWqC-0-large.jpg');
+				// background-size: 110% 110%;
+				// background-position: 5% 5%;
 				// padding-top: 100%;
 				// position: absolute;
 				// top: 0;
 				// left: 0;
-				// // z-index: -10;
+				// z-index: -10;
 				// filter: blur(10px);
 				// overflow: hidden;
 				// opacity: 0.1;
@@ -227,6 +229,9 @@ button {
 
 
 
+// --------------------------------------------------
+// Audio Player
+// --------------------------------------------------
 .audio-player {
 	width: 100%;
 	background-color: $color-dark-background;
