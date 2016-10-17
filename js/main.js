@@ -21,6 +21,7 @@ $(document).ready(function()
 	}
 
 
+
 	// --------------------------------------------------
 	// --------------------------------------------------
 	//
@@ -199,6 +200,10 @@ $(document).ready(function()
 			// Add HTML element to search results
 			$searchResults.append(songHTML);
 		});
+
+		// Set height = width (prevents crazy resolutions from throwing off layout)
+		var coverHeight = $('.cover').width();
+		$('.cover').height(coverHeight);
 	}
 
 
