@@ -93,6 +93,9 @@ img {
 		@include boxShadow();
 		@include borderRadius();
 		outline: none;
+		-webkit-transition: all .5s ease;
+	       -moz-transition: all .5s ease;
+		        transition: all .5s ease;
 
 		&:focus {
 			border: 2px solid $color-mint;
@@ -135,6 +138,10 @@ img {
 			position: relative;
 			@include boxShadow();
 			@include borderRadius();
+			-webkit-transition: all .5s ease;
+		       -moz-transition: all .5s ease;
+			        transition: all .5s ease;
+
 
 			// Blurred image over .song parent -- removed for now, leaving for future
 			.cover-blur {
@@ -168,11 +175,14 @@ img {
 
 					.cover-hover {
 						width: 50%;
-						display: none;
+						opacity: 0;
 						position: absolute;
 						top: 50%;
 						left: 50%;
 						transform: translate(-50%, -50%);
+						-webkit-transition: all .5s ease;
+					       -moz-transition: all .5s ease;
+						        transition: all .5s ease;
 					}
 				}
 
@@ -215,7 +225,7 @@ img {
 				.cover-block {
 
 					.cover-hover {
-						display: block;
+						opacity: 1;
 					}
 				}
 			}
@@ -238,7 +248,9 @@ img {
 	padding: 20px;
 	position: fixed;
 	bottom: -100px;
-	transition: all .5s ease;
+	-webkit-transition: all .5s ease;
+	   -moz-transition: all .5s ease;
+		    transition: all .5s ease;
 	
 
 	audio {
