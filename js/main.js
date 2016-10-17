@@ -1,415 +1,211 @@
 $(document).ready(function()
 {
-	// Weekly forecast array
-	var weeklyForecast 	= [];
-	var forecastUnit 	= JSON.parse(localStorage.getItem('unit'));
-	var location 		= JSON.parse(localStorage.getItem('location'));
-
 	// DOM selectors
-	var $locationInput 	= $('#locationInput');
-	var $forecastData 	= $('#forecastData');
-	var $forecastUnit 	= $('#forecastUnit');
+	var $searchInput 	= $('#searchInput');
+	var $searchResults 	= $('#searchResults');
 
-	// Is forecast unit undefined or null?
-	if(forecastUnit === undefined || forecastUnit === null)
+
+
+	// array to hold search results
+	var searchResults = [];
+
+	// Function constructor for songs (which are then loaded into searchResults array)
+	function Song(id, cover, title, username, userAvatar, streamLink)
 	{
-		// Yes, default to imperial
-		forecastUnit = "imperial";
-	}
-
-	// Is location input defined?
-	if(location !== undefined || location !== null)
-	{
-		// Yes, set value to location input
-		$locationInput.val(location);
-	}
-
-
-
-	// ------------------------------------------------------------
-	// Forecast object constructor
-	// ------------------------------------------------------------
-	function Forecast(dayText, tempHigh, tempLow, condition, iconCode)
-	{
-		this.day 		= dayText;
-		this.tempHigh 	= Math.round(tempHigh);
-		this.tempLow 	= Math.round(tempLow);
-		this.condition 	= condition;
-		this.iconCode 	= iconCode;
-
-		// ------------------------------------------------------------
-		// Prepares link to icon file
-		// ------------------------------------------------------------
-		this.getIconImageURL = function()
-		{
-			var self = this;
-
-			// Get filename from iconCode
-			var filename = getIconFilename(self);
-
-			// Did filename come back as number? (means it's openweathermap code still)
-			if(typeof filename === typeof 0)
-			{
-				// Yes, pass in openweathermap icon to deal with exception
-				return `http://openweathermap.org/img/w/${filename}.png`;
-			}
-			else
-			{
-				// No, pass in local icon image
-				return `images/${filename}`;
-			}
-		}
+		this.id 		= id;
+		this.cover 		= cover;
+		this.title 		= title;
+		this.username 	= username;
+		this.userAvatar = userAvatar;
+		this.streamLink = streamLink;
 	}
 
 
-
-	// ------------------------------------------------------------
-	// ------------------------------------------------------------
-	// 
+	// --------------------------------------------------
+	// --------------------------------------------------
+	//
 	// Event Listeners
-	// 
-	// ------------------------------------------------------------
-	// ------------------------------------------------------------
+	//
+	// --------------------------------------------------
+	// --------------------------------------------------
 
-	// Event listener for location input form
-	$('#locationForm').on('submit', function(e)
+	// Event listener for search form submission
+	$('#searchForm').on('submit', function(e)
 	{
-		// Prevent form from submitting
+		// Stop form from submitting
 		e.preventDefault();
 
-		// Get forecast data from openweathermap API using location from user input
-		getForecastFromAPI();
-	});
+		// Get search input value
+		var input = $searchInput.val();
 
-
-	// Event listener for forecast unit toggle
-	$('#forecastUnit').on('click', function()
-	{
-		// Toggle forecast unit
-		toggleForecastUnit();
-	});
-
-
-
-	// ------------------------------------------------------------
-	// ------------------------------------------------------------
-	// 
-	// Getting & Displaying Forecast
-	// 
-	// ------------------------------------------------------------
-	// ------------------------------------------------------------
-
-	// Call API request on initial load run-through
-	getForecastFromAPI();
-
-
-
-	// ------------------------------------------------------------
-	// Makes AJAX call to openweathermap API
-	// ------------------------------------------------------------
-	function getForecastFromAPI()
-	{
-		// Set focus to location input
-		$locationInput.focus();
-
-		// Set defaults if anything isn't set or loaded
-		validateInput();
-
-		// Visually update forecast unit for user
-		setForecastUnit();
-
-		// Set new location from input
-		location = $locationInput.val();
-
-		// AJAX call to openweatherdata api
-		$.ajax({
-			url: `http://api.openweathermap.org/data/2.5/forecast/daily?q=${location}&type=like&units=${forecastUnit}&cnt=7&APPID=ebf5e5843530b4f8cf4c0bd17b6b6048`,
-			method: 'GET',
-			success: function(data) { prepareWeeklyForecast(data); },
-			error: function(err) { console.log("Error! Message: " + e.responseText); },
-			complete: function() { console.log("All done!"); }
-		})
-	}
-
-
-
-	// ------------------------------------------------------------
-	// Strips needed data from API data and puts it in an object
-	// ------------------------------------------------------------
-	function prepareWeeklyForecast(data)
-	{
-		// Clear out weekly forecast array
-		weeklyForecast = [];
-
-		// Set global location
-		location = data.city.name + ", " + data.city.country;
-
-		// Display the city openweatherdata matched with user's input and add the country to the end
-		$locationInput.val(location);
-
-		// Save location to local storage
-		localStorage.setItem('location', JSON.stringify(location));
-
-		// Loop through forecast days
-		data.list.forEach(function(day)
+		// Was something submitted?
+		if(validateInput(input))
 		{
-			var date 		= new Date(day.dt * 1000),
-				dayText 	= getDayText(date.getDay()),
-				tempHigh 	= day.temp.max,
-				tempLow 	= day.temp.min,
-				condition 	= day.weather[0].description,
-				iconCode 	= day.weather[0].icon;
+			// Yes, send it to the API
+			callSoundcloudAPI(input);
+		}
+	});
 
-			// Create new Forecast object and load with forecast data
-			var forecastDay = new Forecast(dayText, tempHigh, tempLow, condition, iconCode);
+	// Event Listener for song block (controls song selection)
+	$('body').on('click', '.song-block', function()
+	{
+		var id = this.id;
+		var streamLink = null;
 
-			// Push into weekly forecast array
-			weeklyForecast.push(forecastDay);
+		// Loop through search result songs
+		searchResults.forEach(function(song)
+		{
+			// Find the matching ID's
+			if(id == song.id)
+			{
+				// Grab it's stream link
+				streamLink = song.streamLink + '?client_id=03e4633e2d85874a921380e47cac705d';
+			}
 		});
 
-		// Prepare HTML and display data
-		displayWeeklyForecast();
+		// Remove old active element, if there was one
+		$('.song-block .active').removeClass('active');
+
+		// Add new active element
+		$(this).children('.song').addClass('active');
+
+		// Animate audio player on-screen
+		$('.audio-player').css('bottom', 0);
+
+		// Add stream link to audio element's source
+		$('#audioPlayer').attr('src', streamLink);
+
+	});
+
+
+
+	// --------------------------------------------------
+	// Get data from Soundcloud API
+	// --------------------------------------------------
+	function callSoundcloudAPI(input)
+	{
+		SC.initialize({
+			
+			client_id: '03e4633e2d85874a921380e47cac705d'
+
+		});
+
+		// find all sounds of buskers licensed under 'creative commons share alike'
+		SC.get('/tracks',
+		{
+			// Search for user query
+			q: input
+
+		}).then(function(tracks)
+		{
+		 	// Put needed data into an object
+			loadDataToObject(tracks);
+
+			// Display data from objects
+			displayData();
+
+		});
 	}
 
 
 
-	// ------------------------------------------------------------
-	// Sets Forecast Day's HTML and appends it to parent element
-	// ------------------------------------------------------------
-	function displayWeeklyForecast()
+	// --------------------------------------------------
+	// Takes data from API and loads it into object
+	// --------------------------------------------------
+	function loadDataToObject(tracks)
 	{
-		// Empty HTML element
-		$forecastData.empty();
-
-		// Loop through weekly forecast array
-		weeklyForecast.forEach(function(day)
+		// Loop through each search result
+		tracks.forEach(function(track)
 		{
-			// Load data into HTML block
-			var forecastBlock = 
+			// Create new object to store data into
+			var song = new Song();
+
+			// Strip the fat off the API results
+			song.id 		= track.id;
+			song.cover 		= track.artwork_url;
+			song.title 		= track.title;
+			song.username 	= track.user.username;
+			song.userAvatar = track.user.avatar_url;
+			song.streamLink = track.stream_url;
+
+			// Load object into array
+			searchResults.push(song);
+		});
+	}
+
+
+
+	// --------------------------------------------------
+	// Display data from API
+	// --------------------------------------------------
+	function displayData()
+	{
+		// Clear old search results
+		$searchResults.html('');
+
+		// Loop through search results
+		searchResults.forEach(function(track)
+		{
+			// Missing track cover?
+			if(track.cover === null)
+			{
+				// Yes, set default image as track cover
+				track.cover = "images/cover-default.svg";
+			}
+
+			// Create HTML element to display
+			var songHTML = 
 			`
-				<div class="forecast-day">
-					<div class="details">
-						<h3 class="day">${day.day}</h3>
-						<p class="condition">${day.condition}</p>
-					</div>
-					<img class="forecast-icon" src="${day.getIconImageURL()}" alt="${day.condition}">
-					<div class="temps">
-						<p class="temp low"><img src="images/low.svg" alt="Low Temperature">${day.tempLow}&deg;</p>
-						<p class="temp high"><img src="images/high.svg" alt="High Temperature">${day.tempHigh}&deg;</p>
-					</div>
-				</div> 
+				<div id="${track.id}" class="col-xs-4 col-md-3 song-block">
+					<div class="song">
+						<div class="cover-blur"></div>
+						<div class="content">
+							<div class="cover-block">
+								<img class="cover-hover" src="images/play.svg">
+								<img class="cover" src="${track.cover}">
+							</div>
+							<h2 class="song-title">${track.title}</h2>
+							<div class="user">
+								<img class="avatar" src="${track.userAvatar}">
+								<h3 class="username">${track.username}</h3>
+							</div>
+						</div>
+					</div> 
+				</div>
 			`;
 
-			// Append HTML block to DOM
-			$forecastData.append(forecastBlock);
+			// Add HTML element to search results
+			$searchResults.append(songHTML);
 		});
 	}
 
 
 
-	// ------------------------------------------------------------
-	// ------------------------------------------------------------
-	//
-	// Toggle Unit of Temperature
-	//
-	// ------------------------------------------------------------
-	// ------------------------------------------------------------
-
-	// ------------------------------------------------------------
-	// Toggle the unit of measurement for temperature
-	// ------------------------------------------------------------
-	function toggleForecastUnit()
-	{
-		// Was unit of measurement imperial?
-		if(forecastUnit === "imperial")
-		{
-			// Yes, toggle over to metric
-			forecastUnit = "metric";
-		}
-		else
-		{
-			// No, toggle over to imperial
-			forecastUnit = "imperial";
-		}
-
-		// Save new unit in local storage
-		localStorage.setItem('unit', JSON.stringify(forecastUnit));
-
-		// Visually update forecast unit for user
-		setForecastUnit();
-
-		// Change units in weeklyForecast objects mathematically 
-		calculateUnits();
-
-		// Update visually displayed temperatures
-		displayWeeklyForecast();
-	}
-
-
-
-	// ------------------------------------------------------------
-	// Toggle the unit of measurement for temperature
-	// ------------------------------------------------------------
-	function setForecastUnit()
-	{
-		// Is the unit matric?
-		if(forecastUnit === "metric")
-		{
-			// Yes, add class metric to move toggle
-			$forecastUnit.addClass('metric');
-		}
-		else
-		{
-			// No, remove class metric to move toggle
-			$forecastUnit.removeClass('metric');
-		}
-	}
-
-
-
-	// ------------------------------------------------------------
-	// Calculate unit change from metric to imperial, vise versa
-	// ------------------------------------------------------------
-	function calculateUnits()
-	{
-		// Is user switching to metric?
-		if(forecastUnit === "metric")
-		{
-			// Yes, loop through weeklyForecast array & change highs/lows to metric
-			weeklyForecast.forEach(function(day)
-			{
-				day.tempHigh = Math.round((day.tempHigh - 32) / 1.8);
-				day.tempLow  = Math.round((day.tempLow - 32) / 1.8);
-			});
-		}
-		else
-		{
-			// No, loop through weeklyForecast array & change highs/lows to imperial
-			weeklyForecast.forEach(function(day)
-			{
-				day.tempHigh = Math.round((day.tempHigh * 1.8) + 32);
-				day.tempLow  = Math.round((day.tempLow * 1.8) + 32);
-			});
-		}
-	}
-
-
-
-	// ------------------------------------------------------------
-	// ------------------------------------------------------------
+	// --------------------------------------------------
+	// --------------------------------------------------
 	//
 	// Utilities
 	//
-	// ------------------------------------------------------------
-	// ------------------------------------------------------------
+	// --------------------------------------------------
+	// --------------------------------------------------
 
-	// ------------------------------------------------------------
-	// Validate location form input & forecast unit toggle
-	// ------------------------------------------------------------
-	function validateInput()
+	// --------------------------------------------------
+	// Validate input
+	// --------------------------------------------------
+	function validateInput(input)
 	{
-		var locationFromForm = $locationInput.val();
-
-		// Is the location undefined or empty?
-		if(locationFromForm === undefined || locationFromForm.trim() === "")
+		// Is the input empty, undefined, or null?
+		if(input.trim() === "" || input === undefined || input === null)
 		{
-			// Use Cincinnati as default 
-			location = 'Cincinnati, US';
-			$locationInput.val(location);
+			// Yes, alert the user
+			alert('Please enter a song/artist and try again');
+
+			// Return false, validation failed, do not pass go
+			return false;
 		}
-	}
 
-
-
-	// ------------------------------------------------------------
-	// Takes in icon code from API and sets different images to code
-	// ------------------------------------------------------------
-	function getIconFilename(self)
-	{
-		// Match icon code then return appropriate image name.type
-		switch(self.iconCode)
-			{
-				case '01d':
-					return 'sunny.svg';
-					break;
-				case '01n':
-					return 'moon.svg';
-					break;
-				case '02d':
-					return 'cloud-few.svg';
-					break;
-				case '02n':
-					return 'cloud-few-night.svg';
-					break;
-				case '03d':
-				case '03n':
-				case '04d':
-				case '04n':
-					return 'cloud-scattered.svg';
-					break;
-				case '09d':
-					return 'rainy.svg';
-					break;
-				case '09n':
-					return 'rainy-night.svg';
-					break;
-				case '10d':
-				case '10n':
-					return 'rain.svg';
-					break;
-				case '11d':
-				case '11n':
-					return 'storm.svg';
-					break;
-				case '13d':
-				case '13n':
-					return 'snowflake.svg';
-					break;
-				case '50d':
-				case '50n':
-					return 'raindrop.svg';
-					break;
-				default:
-					return self.iconCode;
-					break;
-			}
-	}
-
-
-
-	// ------------------------------------------------------------
-	// Takes index of day from date and returns full day's text
-	// ------------------------------------------------------------
-	function getDayText(dayIndex)
-	{
-		// Match day index and return full text
-		switch(dayIndex)
-		{
-			case 0:
-				return 'Sunday';
-				break;
-			case 1:
-				return 'Monday';
-				break;
-			case 2:
-				return 'Tuesday';
-				break;
-			case 3:
-				return 'Wednesday';
-				break;
-			case 4:
-				return 'Thursday';
-				break;
-			case 5:
-				return 'Friday';
-				break;
-			case 6:
-				return 'Saturday';
-				break;
-			default:
-				return 'Invalid Date';
-				break;
-		}
+		// Return true, and continue onward
+		return true;
 	}
 
 });

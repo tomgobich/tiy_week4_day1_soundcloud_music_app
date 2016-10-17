@@ -2,10 +2,10 @@
 // Variables
 // --------------------------------------------------
 $color-background: #323133;
+$color-dark-background: darken($color-background, 2);
 $color-white: #F5F7FA;
 $color-dark-white: darken($color-white, 10);
-$color-high: #DA4453;
-$color-low: #5D9CEC;
+$color-mint: #37BC9B;
 
 
 
@@ -20,6 +20,13 @@ $color-low: #5D9CEC;
 
 @mixin boxShadow() {
 	box-shadow: 1px 1px 3px rgba($color-background, .2);
+}
+
+@mixin borderRadius() {
+	$border-radius: 3px;
+	-webkit-border-radiu: $border-radius;
+	  -moz-border-radius: $border-radius;
+		   border-radius: $border-radius;
 }
 
 
@@ -39,7 +46,8 @@ html, body {
 body {
 	font-family: 'Titillium Web', sans-serif;
     background-color: $color-background;
-    color: #333;
+    color: $color-dark-white;
+    font-weight: 300;
 }
 
 p,
@@ -63,9 +71,167 @@ button {
 
 
 // --------------------------------------------------
-// Responsive Styles
+// Search Form
 // --------------------------------------------------
+#searchForm {
+	margin-top: 30px;
+	
+	input {
+		width: 90%;
+		background-color: $color-dark-background;
+		font-size: 1.2em;
+		padding: 8px;
+		border: 2px solid $color-dark-background;
+		float: left;
+		@include boxShadow();
+		@include borderRadius();
+		outline: none;
 
+		&:focus {
+			border: 2px solid $color-mint;
+		}
+	}
+
+	button {
+		width: 8%;
+		background-color: $color-dark-white;
+		color: $color-background;
+		padding: 10px 0;
+		float: right;
+		@include boxShadow();
+		@include borderRadius();
+
+		&:hover {
+			background-color: $color-mint;
+		}
+	}
+}
+
+.site-title {
+	font-family: 'Sriracha', cursive;
+}
+
+
+
+// --------------------------------------------------
+// Song Listing
+// --------------------------------------------------
+.song-list {
+	margin-top: 30px;
+
+	.song-block {
+		cursor: pointer;
+
+		.song {
+			width: 100%;
+			background-color: $color-dark-background;
+			padding: 15px;
+			border: 2px solid $color-dark-background;
+			margin-bottom: 30px;
+			position: relative;
+			@include boxShadow();
+			@include borderRadius();
+
+			.cover-blur {
+				width: 100%;
+				height: 100%;
+				// background-image: url('https://i1.sndcdn.com/artworks-SmAEjP0iKWqC-0-large.jpg');
+				// background-size: 110% 110%;
+				// background-position: 5% 5%;
+				padding-top: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				// z-index: -10;
+				filter: blur(10px);
+				overflow: hidden;
+				opacity: 0.1;
+			}
+
+			.content {
+				z-index: 10;
+
+				.cover-block {
+					position: relative;
+					overflow: hidden;
+
+					.cover {
+						width: 100%;
+						height: auto;
+						@include borderRadius();
+					}
+
+					.cover-hover {
+						width: 50%;
+						display: none;
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						transform: translate(-50%, -50%);
+					}
+				}
+
+				.song-title {
+					font-size: 1.6em;
+					margin: 10px 0 0 0;
+				}
+
+				.user {
+					padding-top: 10px;
+				
+					.avatar {
+						width: 20px;
+						height: 20px;
+						display: inline-block;
+						vertical-align: top;
+						border-radius: 50%;
+					}
+
+					.username {
+						font-size: 1em;
+						font-weight: 300;
+						display: inline-block;
+						vertical-align: top;
+						padding: 1px 0 0 10px;
+						margin: 0;
+					}
+				}
+			}
+
+			&:hover {
+				border: 2px solid $color-mint;
+
+				.cover-block {
+
+					.cover-hover {
+						display: block;
+					}
+				}
+			}
+
+			&.active {
+				border: 2px solid $color-mint;				
+			}
+		}
+	}
+}
+
+
+
+.audio-player {
+	width: 100%;
+	background-color: $color-dark-background;
+	padding: 20px;
+	position: fixed;
+	bottom: -100px;
+	transition: all 2s ease;
+	
+
+	audio {
+		width: 100%;
+
+	}
+}
 
 
 

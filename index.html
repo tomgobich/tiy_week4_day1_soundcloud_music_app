@@ -12,15 +12,56 @@
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 
 	<!-- Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Sriracha" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Titillium+Web:200,200i,300,300i,400,400i,600,600i,700,700i" rel="stylesheet">
 </head>
 <body>
 
 	<!-- Container -->
 	<div class="container">
-		<h1>Soundcloud Music App</h1>
+		<div class="row">
+			<div class="col-xs-12">
+				<h1 class="site-title">The Soundclouder</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<form id="searchForm">
+					<input id="searchInput" type="text" name="search" placeholder="Enter a song/artist...">
+					<button type="submit" class="btn"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+				</form>
+			</div>
+		</div>
+		<div id="searchResults" class="row song-list">
+			<div class="col-xs-12">
+				<p>Search for a song/artist/genre to get started!</p>
+			</div>
+			 
+			<!-- Block to add -->
+			<!-- <div class="col-xs-4 col-md-3 song-block">
+				<div class="song">
+					<div class="cover-blur"></div>
+					<div class="content">
+						<img class="cover" src="http://placehold.it/250x250">
+						<h2 class="song-title">Song Title</h2>
+						<div class="user">
+							<img class="avatar" src="http://placehold.it/40x40">
+							<h3 class="username">Username</h3>
+						</div>
+					</div>
+				</div> 
+			</div> -->
+
+		</div>
 	</div>
 	<!-- /.container -->
+
+	<div class="audio-player">
+		<audio id="audioPlayer" src="" controls autoplay="true"></audio>
+	</div>
+
+	<!-- Soundcloud -->
+	<script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
 
 	<!-- JQuery -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
