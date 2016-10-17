@@ -114,11 +114,14 @@ $(document).ready(function()
 	// --------------------------------------------------
 	function loadDataToObject(tracks)
 	{
+		// Empty search results array
+		searchResults = [];
+
 		// Loop through each search result
 		tracks.forEach(function(track)
 		{
 			// Create new object to store data into
-			var song = new Song();
+			var song = new Song();			
 
 			// Strip the fat off the API results
 			song.id 		= track.id;
@@ -167,11 +170,15 @@ $(document).ready(function()
 				// Yes, set default image as track cover
 				track.cover = "images/cover-default.svg";
 			}
+			else
+			{
+				track.cover = track.cover.replace("large", "crop");
+			}
 
 			// Create HTML element to display
 			var songHTML = 
 			`
-				<div id="${track.id}" class="col-xs-4 col-md-3 song-block">
+				<div id="${track.id}" class="col-sm-6 col-md-3 song-block">
 					<div class="song">
 						<div class="cover-blur"></div>
 						<div class="content">

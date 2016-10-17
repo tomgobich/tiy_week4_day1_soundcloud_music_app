@@ -100,6 +100,7 @@ button {
 		float: right;
 		@include boxShadow();
 		@include borderRadius();
+		outline: none;
 
 		&:hover {
 			background-color: $color-mint;
@@ -133,19 +134,19 @@ button {
 			@include borderRadius();
 
 			.cover-blur {
-				width: 100%;
-				height: 100%;
-				// background-image: url('https://i1.sndcdn.com/artworks-SmAEjP0iKWqC-0-large.jpg');
-				// background-size: 110% 110%;
-				// background-position: 5% 5%;
-				padding-top: 100%;
-				position: absolute;
-				top: 0;
-				left: 0;
-				// z-index: -10;
-				filter: blur(10px);
-				overflow: hidden;
-				opacity: 0.1;
+				// width: 100%;
+				// height: 100%;
+				// // background-image: url('https://i1.sndcdn.com/artworks-SmAEjP0iKWqC-0-large.jpg');
+				// // background-size: 110% 110%;
+				// // background-position: 5% 5%;
+				// padding-top: 100%;
+				// position: absolute;
+				// top: 0;
+				// left: 0;
+				// // z-index: -10;
+				// filter: blur(10px);
+				// overflow: hidden;
+				// opacity: 0.1;
 			}
 
 			.content {
@@ -172,8 +173,14 @@ button {
 				}
 
 				.song-title {
-					font-size: 1.6em;
+					width: 100%;
+					font-size: 1.2em;
+					white-space: nowrap;
+					height: 25px;
 					margin: 10px 0 0 0;
+					display: block;
+					overflow: hidden;
+					text-overflow: ellipsis;
 				}
 
 				.user {
@@ -224,7 +231,7 @@ button {
 	padding: 20px;
 	position: fixed;
 	bottom: -100px;
-	transition: all 2s ease;
+	transition: all .5s ease;
 	
 
 	audio {
