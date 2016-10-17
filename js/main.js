@@ -131,6 +131,21 @@ $(document).ready(function()
 			// Load object into array
 			searchResults.push(song);
 		});
+
+		// sort data... hopefully
+		searchResults.sort(function(a, b)
+		{
+			if(a.title < b.title)
+			{
+				return -1;
+			}
+			if(a.title > b.title)
+			{
+				return 1;
+			}
+
+			return 0;
+		});
 	}
 
 
