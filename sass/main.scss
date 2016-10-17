@@ -1,0 +1,75 @@
+// --------------------------------------------------
+// Variables
+// --------------------------------------------------
+$color-background: #323133;
+$color-white: #F5F7FA;
+$color-dark-white: darken($color-white, 10);
+$color-high: #DA4453;
+$color-low: #5D9CEC;
+
+
+
+// --------------------------------------------------
+// Mixins
+// --------------------------------------------------
+@mixin clearAfter() {
+	content:"";
+    display:table;
+    clear:both;
+}
+
+@mixin boxShadow() {
+	box-shadow: 1px 1px 3px rgba($color-background, .2);
+}
+
+
+
+// --------------------------------------------------
+// Global Styles
+// --------------------------------------------------
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	font-family: 'Titillium Web', sans-serif;
+    background-color: $color-background;
+    color: #333;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	line-height: 1.4em;
+}
+
+img {
+	max-width: 100%;
+}
+
+button {
+	outline: none;
+}
+
+
+
+// --------------------------------------------------
+// Responsive Styles
+// --------------------------------------------------
+
+
+
+
+// --------------------------------------------------
+// Responsive Styles
+// --------------------------------------------------
+@import '_responsive.scss';
