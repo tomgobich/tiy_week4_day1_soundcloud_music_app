@@ -62,7 +62,8 @@ img {
       background-color: #37BC9B; }
 
 .song-list {
-  margin-top: 60px; }
+  margin-top: 60px;
+  padding-bottom: 60px; }
   .song-list .song-block {
     cursor: pointer; }
     .song-list .song-block .song {
